@@ -8,7 +8,7 @@ Implement a dynamically typed language in C++ that is evaluated 100% at compile 
 The language will be implemented as a tree-walk interpreter which makes use of nodes that  perform different operations.  
 
 ###### Compiler
-GCC-11 /std:c++17
+GCC-11 /std:c++20
 
 ###### Milestones:
 1. Implement basic chainable expressions such as binary ops for float/number types

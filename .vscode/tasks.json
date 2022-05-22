@@ -5,7 +5,7 @@
             "label": "C/C++: g++ build active file",
             "command": "/bin/g++-11",
             "args": [
-                "-std=c++17",
+                "-std=c++20",
                 "-fconstexpr-depth=100000",
                 "-fdiagnostics-color=always",
                 "-g",
