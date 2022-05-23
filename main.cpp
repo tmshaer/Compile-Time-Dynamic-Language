@@ -5,6 +5,8 @@
 #include <iostream>
 #include "nodes.cpp"
 #include <charconv>
+#include <vector>
+
 
 
 using namespace ctpg;
@@ -63,7 +65,8 @@ constexpr parser p(
         // list(list, ',', number)
         //     >= [](int sum, char, const auto& n){ return 5.23; }
          binop(number, '+', number)
-             >= [](const auto& n, char, const auto& n2){ return BinOp(to_int(n), to_int(n2)); }
+             >= [](const auto& n, char, const auto& n2){ 
+                 return BinOp(to_int(n), to_int(n2)); }
     )
 );
 
@@ -75,9 +78,82 @@ constexpr parser p(
 // https://github.com/peter-winter/ctpg
 
 
+// template<>
+// struct PointerCreater {
+//     static int a;
+// };
+
+template<BinOp N>
+class CSInt {
+public:
+static constexpr const BinOp value = N;
+};
+
+
+template<int a>
+class LOL {
+
+};
+
+
+
+// constexpr const BinOp lol2(const int numa, const int numb) {
+
+
+
+//     // auto x = CONSTANT_VALUE(42);
+//     // auto y = CONSTANT_VALUE(42);
+
+//     // constexpr int aaa = make_const(numa);
+//     // const constexpr BinOp a(3, 2);
+//     // CSInt<a> b;
+//     return CSInt<BinOp(numa, numb)>::value;
+// }
+
+
+constexpr const BinOp* lol(const int numa, const int numb) {
+
+    // LOL<decltype(numa)> lola;
+
+    // auto x = CONSTANT_VALUE(42);
+    // auto y = CONSTANT_VALUE(42);
+
+    // constexpr int aaa = make_const(numa);
+    const constexpr BinOp a(3, 2);
+    CSInt<a> b;
+    return &b.value;
+}
+
+
+
+
+// void test(const int test2) {
+
+
+//     doNothing<test2>();
+// }
+//https://gcc.gnu.org/projects/cxx-status.html#cxx11
 
 int main(int argc, char* argv[])
 {
+
+    lol(2, 3);
+
+    // const constexpr int a = 2;
+    // const constexpr int b = 4;
+    // lol()
+    // static_assert(lol(3, 4)->evaluate() == 7);
+
+    // std::cout << lol()->evaluate() << std::endl;
+
+    // CSInt<CSInt<2>::value> a;
+
+    // Node a = BinOp(2, 3);
+
+    // std::cout << *createPointer() << std::endl;
+
+    return 0; 
+
 
     constexpr char example_text[] = "1 + 40";
 
