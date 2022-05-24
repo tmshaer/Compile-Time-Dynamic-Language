@@ -66,6 +66,7 @@ constexpr parser p(
         //     >= [](int sum, char, const auto& n){ return 5.23; }
          binop(number, '+', number)
              >= [](const auto& n, char, const auto& n2){ 
+
                  return BinOp(to_int(n), to_int(n2)); }
     )
 );
@@ -118,13 +119,25 @@ constexpr const BinOp* lol(const int numa, const int numb) {
     // auto x = CONSTANT_VALUE(42);
     // auto y = CONSTANT_VALUE(42);
 
-    // constexpr int aaa = make_const(numa);
     const constexpr BinOp a(3, 2);
     CSInt<a> b;
     return &b.value;
 }
 
 
+class A {
+public:
+    void doSomething() {
+        std::cout << "I am a" << std::endl;
+    }
+};
+
+class B : public A {
+public:
+void doSomething() {
+        std::cout << "I am b" << std::endl;
+    }
+};
 
 
 // void test(const int test2) {
@@ -136,6 +149,13 @@ constexpr const BinOp* lol(const int numa, const int numb) {
 
 int main(int argc, char* argv[])
 {
+
+    A().doSomething();
+    B().doSomething();
+
+    A c = B();
+    c.doSomething();
+
 
     lol(2, 3);
 

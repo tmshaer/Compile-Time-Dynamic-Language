@@ -1,6 +1,9 @@
 # Compile Time Dynamic Language
 
 
+Attempt to use CTPG failed. Having difficulty creating a tree. Typically I use pointers to point to child ndoes,
+
+
 ###### Aim of project: 
 Implement a dynamically typed language in C++ that is evaluated 100% at compile time.
 
