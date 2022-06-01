@@ -17,9 +17,9 @@
 int main(int argc, char* argv[])
 {
 
-    using test = LinkedListNode<2, LinkedListNode<3>>;
+    using test = LinkedListNode<2, LinkedListNode<3, LinkedListNode<7>>>;
 
-    constexpr auto result2 = LinkedListGenericWalker<TestType2<int, 'a'>>::value;
+    constexpr auto result2 = LinkedListWalker<test>::value;
     
 
     std::cout << result2 << std::endl;

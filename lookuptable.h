@@ -43,10 +43,15 @@ struct LinkedListWalker {
 };
 
 
-
-// int non type template template specilisation
-template<template <typename, int> typename A, typename T, int C>
-struct LinkedListWalker<A<T, C>> {
+template<template <int, typename> typename A, int C>
+struct LinkedListWalker<A<C, LinkedListEmptyNode>> {
     static const int value  = C;
 };
+
+// int non type template template specilisation
+template<template <int, typename> typename A, int C, typename T>
+struct LinkedListWalker<A<C, T>> {
+    static const int value  = LinkedListWalker<T>::value;
+};
+
 
