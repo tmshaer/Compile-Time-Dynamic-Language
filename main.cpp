@@ -17,11 +17,11 @@
 int main(int argc, char* argv[])
 {
 
-    using test = LinkedListNode<2, LinkedListNode<3, LinkedListNode<7>>>;
+    using test = LinkedListNode<2, 3, LinkedListNode<3, 4, LinkedListNode<7, 9>>>;
 
 
     std::cout << LinkedListGetFinalValue<test>::value << std::endl;
-    std::cout << LinkedListGetFinalValue<LinkedListAddValue<test, 5>::newList>::value << std::endl;
+    std::cout << LinkedListGetFinalValue<LinkedListAddValue<test, 5, 9>::newList>::value << std::endl;
 
     // constexpr auto result2 = LinkedListGetFinalValue<test>::value;
     

@@ -18,9 +18,8 @@ struct LinkedListEmptyNode {
 };
 
 
-template<int V, typename T = LinkedListEmptyNode>
+template<int ID, int Value, typename T = LinkedListEmptyNode>
 struct LinkedListNode {
-    static const int value = V;
 };
 
 
@@ -36,14 +35,15 @@ struct LinkedListGetFinalValue {
 };
 
 
-template<template <int, typename> typename A, int C>
-struct LinkedListGetFinalValue<A<C, LinkedListEmptyNode>> {
-    static const int value  = C;
+// end case i.e. matched on LinkedListEmptyNode
+template<template <int, int, typename> typename A, int ID, int Value>
+struct LinkedListGetFinalValue<A<ID, Value, LinkedListEmptyNode>> {
+    static const int value  = Value;
 };
 
-// int non type template template specilisation
-template<template <int, typename> typename A, int C, typename T>
-struct LinkedListGetFinalValue<A<C, T>> {
+
+template<template <int, int, typename> typename A, int ID, int Value, typename T>
+struct LinkedListGetFinalValue<A<ID, Value, T>> {
     static const int value  = LinkedListGetFinalValue<T>::value;
 };
 
@@ -52,19 +52,48 @@ Adds new value to end of linked list.
 Recreates the LinkedList with an extra value at the end.
 */
 
-template<typename T, int NewValue>
+template<typename T, int NewID, int NewValue>
 struct LinkedListAddValue {
     using newList = T;
 };
 
-template<template <int, typename> typename A, int C, int NewValue>
-struct LinkedListAddValue<A<C, LinkedListEmptyNode>, NewValue> {
-    using newList  = LinkedListNode<C, LinkedListNode<NewValue>>;
+// end case i.e. matched on LinkedListEmptyNode
+template<template <int, int, typename> typename A, int OldID, int OldValue, int NewID, int NewValue>
+struct LinkedListAddValue<A<OldID, OldValue, LinkedListEmptyNode>, NewID, NewValue> {
+    using newList  = LinkedListNode<OldID, OldValue, LinkedListNode<NewID, NewValue>>;
 };
 
-template<template <int, typename> typename A, int C, typename T, int NewValue>
-struct LinkedListAddValue<A<C, T>, NewValue> {
-    using extract = LinkedListAddValue<T, NewValue>::newList;
-    using newList  = LinkedListNode<C, extract>;
+template<template <int, int, typename> typename A, int OldID, int OldValue, typename T, int NewID, int NewValue>
+struct LinkedListAddValue<A<OldID, OldValue, T>, NewID, NewValue> {
+    using extract = LinkedListAddValue<T, NewID, NewValue>::newList;
+    using newList  = LinkedListNode<OldID, OldValue, extract>;
 };
 
+
+/*
+Gets value in linkedlist by id
+*/
+
+template<typename T, int LookupID>
+struct LinkedListGetValue {
+    static const int value  = -1;
+};
+
+
+// end case i.e. matched on LinkedListEmptyNode
+template<template <int, int, typename> typename A, int ID, int Value, int LookupID>
+struct LinkedListGetValue<A<ID, Value, LinkedListEmptyNode>, LookupID> {
+    static const int value  = -1;
+};
+
+
+// template<template <int, int, typename> typename A, int ID, int Value, typename T, int LookupID>
+// struct LinkedListGetValue<A<LookupID, Value, T>, LookupID> {
+//     static const int value  = Value;
+// };
+
+
+template<template <int, int, typename> typename A, int ID, int Value, typename T, int LookupID>
+struct LinkedListGetValue<A<ID, Value, T>, LookupID> {
+    static const int value  = LinkedListGetValue<T, LookupID>::value;
+};
