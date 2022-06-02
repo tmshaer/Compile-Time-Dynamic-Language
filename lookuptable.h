@@ -18,40 +18,53 @@ struct LinkedListEmptyNode {
 };
 
 
-
 template<int V, typename T = LinkedListEmptyNode>
 struct LinkedListNode {
-    using nextType = T;
     static const int value = V;
 };
 
 
-template<typename T, typename A>
-struct TestType {
-
-};
-
-
-template<typename T, auto A>
-struct TestType2 {
-
-};
+/*
+Returns final value in linked list
+Walks along it and uses pattern matching to find the final node
+which will have its next node as LinkedListEmptyNode.
+*/
 
 template<typename T>
-struct LinkedListWalker {
-    static const int value  = 8;
+struct LinkedListGetFinalValue {
+    static const int value  = -1;
 };
 
 
 template<template <int, typename> typename A, int C>
-struct LinkedListWalker<A<C, LinkedListEmptyNode>> {
+struct LinkedListGetFinalValue<A<C, LinkedListEmptyNode>> {
     static const int value  = C;
 };
 
 // int non type template template specilisation
 template<template <int, typename> typename A, int C, typename T>
-struct LinkedListWalker<A<C, T>> {
-    static const int value  = LinkedListWalker<T>::value;
+struct LinkedListGetFinalValue<A<C, T>> {
+    static const int value  = LinkedListGetFinalValue<T>::value;
 };
 
+/*
+Adds new value to end of linked list.
+Recreates the LinkedList with an extra value at the end.
+*/
+
+template<typename T, int NewValue>
+struct LinkedListAddValue {
+    using newList = T;
+};
+
+template<template <int, typename> typename A, int C, int NewValue>
+struct LinkedListAddValue<A<C, LinkedListEmptyNode>, NewValue> {
+    using newList  = LinkedListNode<C, LinkedListNode<NewValue>>;
+};
+
+template<template <int, typename> typename A, int C, typename T, int NewValue>
+struct LinkedListAddValue<A<C, T>, NewValue> {
+    using extract = LinkedListAddValue<T, NewValue>::newList;
+    using newList  = LinkedListNode<C, extract>;
+};
 
