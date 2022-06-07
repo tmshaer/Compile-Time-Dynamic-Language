@@ -7,8 +7,7 @@
 #include "lookuptable.h"
 #include "node.h"
 #include "genericlookuptable.h"
-
-
+#include "string"
 
 
 
@@ -17,11 +16,17 @@
 int main(int argc, char* argv[])
 {
 
-    using test = LinkedListNode<2, 3, LinkedListNode<3, 4, LinkedListNode<7, 9>>>;
+
+    // std::cout << Foo<"gey">::value << std::endl;
+
+    // return 0;
+
+    using test = LinkedListNode<"hi", 3, LinkedListNode<"hello", 4, LinkedListNode<"hey!", 9>>>;
 
 
     std::cout << LinkedListGetFinalValue<test>::value << std::endl;
-    std::cout << LinkedListGetFinalValue<LinkedListAddValue<test, 5, 9>::newList>::value << std::endl;
+    std::cout << LinkedListGetFinalValue<LinkedListAddValue<test, "sup", 9>::newList>::value << std::endl;
+    std::cout << LinkedListGetValue<test, "hey!">::value << std::endl;
 
     // constexpr auto result2 = LinkedListGetFinalValue<test>::value;
     
