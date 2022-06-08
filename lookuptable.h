@@ -14,9 +14,12 @@ Registering new identifiers (and values)
 
 
 
-//https://stackoverflow.com/questions/62853609/understanding-user-defined-string-literals-addition-for-c20
 
+/*
+Compatible string literal compile time type (used for ids)
 
+https://stackoverflow.com/questions/62853609/understanding-user-defined-string-literals-addition-for-c20
+*/
 template<size_t N>
 struct string_literal
 {
@@ -29,43 +32,19 @@ struct string_literal
 };
 
 
-struct LinkedListEmptyNode {
 
-};
+//Linked list empty node type (used for matching end of linkedlist) 
+struct LinkedListEmptyNode {};
 
-
+//Linked list node
 template<string_literal ID, int Value, typename T = LinkedListEmptyNode>
-struct LinkedListNode {
-};
+struct LinkedListNode {};
 
-
-/*
-Returns final value in linked list
-Walks along it and uses pattern matching to find the final node
-which will have its next node as LinkedListEmptyNode.
-*/
-
-template<typename T>
-struct LinkedListGetFinalValue {
-    static const int value  = -1;
-};
-
-
-// end case i.e. matched on LinkedListEmptyNode
-template<template <string_literal, int, typename> typename A, string_literal ID, int Value>
-struct LinkedListGetFinalValue<A<ID, Value, LinkedListEmptyNode>> {
-    static const int value  = Value;
-};
-
-
-template<template <string_literal, int, typename> typename A, string_literal ID, int Value, typename T>
-struct LinkedListGetFinalValue<A<ID, Value, T>> {
-    static const int value  = LinkedListGetFinalValue<T>::value;
-};
 
 /*
 Adds new value to end of linked list.
 Recreates the LinkedList with an extra value at the end.
+Will be used for declaring variable
 */
 
 template<typename T, string_literal NewID, int NewValue>
@@ -88,8 +67,9 @@ struct LinkedListAddValue<A<OldID, OldValue, T>, NewID, NewValue> {
 
 /*
 Gets value in linkedlist by id.
-
 Will be used for lookups
+aka
+v = storage["x"]
 */
 
 
@@ -107,4 +87,30 @@ struct LinkedListGetValue<A<ID, Value, T>, ID> {
 template<template <string_literal, int, typename> typename A, string_literal ID, int Value, typename T, string_literal LookupID>
 struct LinkedListGetValue<A<ID, Value, T>, LookupID> {
     static const int value  = LinkedListGetValue<T, LookupID>::value;
+};
+
+
+/*
+Change value in list by id
+aka
+storage["x"] = 2
+*/
+
+template<typename T, string_literal LookupID, int NewValue>
+struct LinkedListSetValue {
+    using newList  = T;
+};
+
+
+template<template <string_literal, int, typename> typename A, string_literal OldID, int OldValue, typename T, int NewValue>
+struct LinkedListSetValue<A<OldID, OldValue, T>, OldID, NewValue> {
+    using newList  = LinkedListNode<OldID, NewValue, T>;
+};
+
+template<template <string_literal, int, typename> typename A, string_literal OldID, int OldValue, typename T, string_literal LookupID, int NewValue>
+struct LinkedListSetValue<A<OldID, OldValue, T>, LookupID, NewValue> {
+    using extract = LinkedListSetValue<T, LookupID, NewValue>::newList;
+    using newList  = LinkedListNode<OldID, OldValue, extract>;
+
+
 };
