@@ -42,30 +42,6 @@ struct LinkedListNode {};
 
 
 /*
-Adds new value to end of linked list.
-Recreates the LinkedList with an extra value at the end.
-Will be used for declaring variable
-*/
-
-template<typename T, string_literal NewID, int NewValue>
-struct LinkedListAddValue {
-    using newList = T;
-};
-
-// end case i.e. matched on LinkedListEmptyNode
-template<template <string_literal, int, typename> typename A, string_literal OldID, int OldValue, string_literal NewID, int NewValue>
-struct LinkedListAddValue<A<OldID, OldValue, LinkedListEmptyNode>, NewID, NewValue> {
-    using newList  = LinkedListNode<OldID, OldValue, LinkedListNode<NewID, NewValue>>;
-};
-
-template<template <string_literal, int, typename> typename A, string_literal OldID, int OldValue, typename T, string_literal NewID, int NewValue>
-struct LinkedListAddValue<A<OldID, OldValue, T>, NewID, NewValue> {
-    using extract = LinkedListAddValue<T, NewID, NewValue>::newList;
-    using newList  = LinkedListNode<OldID, OldValue, extract>;
-};
-
-
-/*
 Gets value in linkedlist by id.
 Will be used for lookups
 aka
@@ -89,6 +65,36 @@ struct LinkedListGetValue<A<ID, Value, T>, LookupID> {
     static const int value  = LinkedListGetValue<T, LookupID>::value;
 };
 
+/*
+Adds new value to end of linked list.
+Recreates the LinkedList with an extra value at the end.
+Will be used for declaring variable
+*/
+
+template<typename T, string_literal NewID, int NewValue>
+struct LinkedListAddValue {
+    using newList = T;
+};
+
+//edge case for when trying to add to a empty
+template<string_literal NewID, int NewValue>
+struct LinkedListAddValue<LinkedListEmptyNode, NewID, NewValue> {
+    using newList  = LinkedListNode<NewID, NewValue>;
+};
+
+// end case i.e. matched on LinkedListEmptyNode
+template<template <string_literal, int, typename> typename A, string_literal OldID, int OldValue, string_literal NewID, int NewValue>
+struct LinkedListAddValue<A<OldID, OldValue, LinkedListEmptyNode>, NewID, NewValue> {
+    using newList  = LinkedListNode<OldID, OldValue, LinkedListNode<NewID, NewValue>>;
+};
+
+
+template<template <string_literal, int, typename> typename A, string_literal OldID, int OldValue, typename T, string_literal NewID, int NewValue>
+struct LinkedListAddValue<A<OldID, OldValue, T>, NewID, NewValue> {
+    using extract = LinkedListAddValue<T, NewID, NewValue>::newList;
+    using newList  = LinkedListNode<OldID, OldValue, extract>;
+};
+
 
 /*
 Change value in list by id
@@ -102,6 +108,7 @@ struct LinkedListSetValue {
 };
 
 
+//match case
 template<template <string_literal, int, typename> typename A, string_literal OldID, int OldValue, typename T, int NewValue>
 struct LinkedListSetValue<A<OldID, OldValue, T>, OldID, NewValue> {
     using newList  = LinkedListNode<OldID, NewValue, T>;
@@ -112,5 +119,36 @@ struct LinkedListSetValue<A<OldID, OldValue, T>, LookupID, NewValue> {
     using extract = LinkedListSetValue<T, LookupID, NewValue>::newList;
     using newList  = LinkedListNode<OldID, OldValue, extract>;
 
+};
+
+/*
+Either sets value if it exists or adds new one
+Helper function that combines set and add functionality into one
+
+*/
+
+template<typename T, string_literal LookupID, int NewValue>
+struct LinkedListSetOrAddValue {
+    using newList  = T;
+};
+
+
+//end case couldn't find a value
+template<string_literal LookupID, int NewValue>
+struct LinkedListSetOrAddValue<LinkedListEmptyNode, LookupID, NewValue> {
+    using newList  = LinkedListNode<LookupID, NewValue>;
+};
+
+
+//match case
+template<template <string_literal, int, typename> typename A, string_literal OldID, int OldValue, typename T, int NewValue>
+struct LinkedListSetOrAddValue<A<OldID, OldValue, T>, OldID, NewValue> {
+    using newList  = LinkedListNode<OldID, NewValue, T>;
+};
+
+template<template <string_literal, int, typename> typename A, string_literal OldID, int OldValue, typename T, string_literal LookupID, int NewValue>
+struct LinkedListSetOrAddValue<A<OldID, OldValue, T>, LookupID, NewValue> {
+    using extract = LinkedListSetOrAddValue<T, LookupID, NewValue>::newList;
+    using newList  = LinkedListNode<OldID, OldValue, extract>;
 
 };
