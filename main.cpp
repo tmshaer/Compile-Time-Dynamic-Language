@@ -92,27 +92,24 @@ int main(int argc, char* argv[])
     std::cout << LinkedListGetValue<LinkedListAddValue<storage, "new", 90>::newList, "new">::value << std::endl;
 
 
-    using code = Execute<storage,
+    using code = Execute<LinkedListEmptyNode,
                          Assign<"x", Num<6>>,
-                         Assign<"y", BinOpPlus<Num<2>, Num<7>>>,
-                         Assign<"z", BinOpPlus<BinOpPlus<Num<2>, Num<10>>, Num<7>>>>;
+                         Assign<"y", BinOpPlus<Num<2>, Var<"x">>>,
+                         Assign<"z", BinOpPlus<BinOpPlus<Var<"y">, Num<10>>, Num<7>>>>;
 
+    static_assert(LinkedListGetValue<code::values, "x">::value == 6);
+    static_assert(LinkedListGetValue<code::values, "y">::value == 8);
+    static_assert(LinkedListGetValue<code::values, "z">::value == 25);
 
-    std::cout << LinkedListGetValue<code::values, "x">::value << std::endl;
-    std::cout << LinkedListGetValue<code::values, "y">::value << std::endl;
-    std::cout << LinkedListGetValue<code::values, "z">::value << std::endl;
+    // std::cout << LinkedListGetValue<code::values, "x">::value << std::endl;
+    // std::cout << LinkedListGetValue<code::values, "y">::value << std::endl;
+    // std::cout << LinkedListGetValue<code::values, "z">::value << std::endl;
 
 
 
     return 0;
 
-    // using expression = BinOpPlus<Num<2>, BinOpPlus<Num<2>, Num<5>>>;
-    using expression = BinOpPlus<Num<2>, Num<7>>;
 
-    constexpr int result = expression::value;
-    static_assert(result == 9);
-
-    // static_assert(expression::value == 7);
 
     return 0;
   
