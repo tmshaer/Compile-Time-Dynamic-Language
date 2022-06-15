@@ -7,12 +7,30 @@
 Contains all the valid AST nodes for our language.
 */
 
-
-template<int N>
-struct Num {
+template<auto N>
+struct Val {
 
     template<typename SymbolTable>
-     static const constexpr int getValue() {
+     static const constexpr auto getValue() {
+        return N;
+    }
+};
+
+template<string_literal N>
+struct ValStr {
+
+    template<typename SymbolTable>
+     static const constexpr auto getValue() {
+        return N;
+    }
+};
+
+
+template<int N>
+struct ValNum {
+
+    template<typename SymbolTable>
+     static const constexpr auto getValue() {
         return N;
     }
 };
@@ -22,7 +40,7 @@ template<string_literal VarName>
 struct Var {
 
     template<typename SymbolTable>
-     static const constexpr int getValue() {
+     static const constexpr auto getValue() {
         return LinkedListGetValue<SymbolTable, VarName>::value;
     }
 };
@@ -32,7 +50,7 @@ template<typename A, typename B>
 struct BinOpPlus {
 
     template<typename SymbolTable>
-    static const constexpr int getValue() {
+    static const constexpr auto getValue() {
         return A::template getValue<SymbolTable>() + B::template getValue<SymbolTable>();
     }
 };

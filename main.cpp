@@ -5,7 +5,6 @@
 #include <charconv>
 #include <functional>
 #include "node.h"
-#include "genericlookuptable.h"
 #include "string"
 
 void runTests() {
@@ -84,22 +83,19 @@ int main(int argc, char* argv[])
     Make it so that you don't have to explicitly pass in a linkedlist item to Execute
     */
 
-    using storage = LinkedListNode<"a", 3, LinkedListNode<"b", 4, LinkedListNode<"hey!", 9>>>;
-
-
-    std::cout << LinkedListGetValue<storage, "a">::value << std::endl;
-    std::cout << LinkedListGetValue<LinkedListSetValue<storage, "a", 40>::newList, "a">::value << std::endl;
-    std::cout << LinkedListGetValue<LinkedListAddValue<storage, "new", 90>::newList, "new">::value << std::endl;
 
 
     using code = Execute<LinkedListEmptyNode,
-                         Assign<"x", Num<6>>,
-                         Assign<"y", BinOpPlus<Num<2>, Var<"x">>>,
-                         Assign<"z", BinOpPlus<BinOpPlus<Var<"y">, Num<10>>, Num<7>>>>;
+                         Assign<"x", ValNum<6>>,
+                         Assign<"y", BinOpPlus<ValNum<2>, Var<"x">>>,
+                         Assign<"z", BinOpPlus<BinOpPlus<Var<"y">, ValNum<10>>, ValNum<7>>>,
+                         Assign<"a", ValStr<"Hello World!">>>;
 
     static_assert(LinkedListGetValue<code::values, "x">::value == 6);
     static_assert(LinkedListGetValue<code::values, "y">::value == 8);
     static_assert(LinkedListGetValue<code::values, "z">::value == 25);
+    std::cout << LinkedListGetValue<code::values, "a">::value << std::endl;
+    //static_assert(LinkedListGetValue<code::values, "z">::value == 25);
 
     // std::cout << LinkedListGetValue<code::values, "x">::value << std::endl;
     // std::cout << LinkedListGetValue<code::values, "y">::value << std::endl;
