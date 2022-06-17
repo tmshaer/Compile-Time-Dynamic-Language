@@ -1,4 +1,5 @@
 #include <iostream>
+#include "specialtypes.h"
 
 /*
 Compile time datastructure used for mapping variable names to values.
@@ -15,29 +16,7 @@ Registering new identifiers (and values)
 
 
 
-/*
-Compatible string literal compile time type (used for ids)
 
-https://stackoverflow.com/questions/62853609/understanding-user-defined-string-literals-addition-for-c20
-*/
-template<size_t N>
-struct string_literal
-{
-    std::array<char, N> arr_;
-
-    constexpr string_literal(const char(&in)[N]) : arr_{}   
-    {
-        std::copy(in, in + N, arr_.begin());
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const string_literal& dt)
-    {
-        //std::string lol(arr_;
-        os << std::string(dt.arr_.data());
-        return os;
-    }
-
-};
 
 
 

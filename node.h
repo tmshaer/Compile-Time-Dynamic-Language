@@ -46,12 +46,12 @@ struct Var {
 };
 
 
-template<typename A, typename B>
-struct BinOpPlus {
+template<typename Func, typename A, typename B>
+struct Apply {
 
     template<typename SymbolTable>
     static const constexpr auto getValue() {
-        return A::template getValue<SymbolTable>() + B::template getValue<SymbolTable>();
+        return Func{}(A::template getValue<SymbolTable>(), B::template getValue<SymbolTable>());
     }
 };
 

@@ -80,26 +80,28 @@ int main(int argc, char* argv[])
     runTests();
     /*
     TODO.
-    Make it so that you don't have to explicitly pass in a linkedlist item to Execute
+    Make it so that you don't have to explicitly pass in a linkedlist item to Execute.
+
+    Make it so that the Apply function takes in any amount of arguments
     */
 
 
 
     using code = Execute<LinkedListEmptyNode,
                          Assign<"x", ValNum<6>>,
-                         Assign<"y", BinOpPlus<ValNum<2>, Var<"x">>>,
-                         Assign<"z", BinOpPlus<BinOpPlus<Var<"y">, ValNum<10>>, ValNum<7>>>,
-                         Assign<"a", ValStr<"Hello World!">>>;
+                         Assign<"y", Apply<std::plus<>, ValNum<2>, Var<"x">>>,
+                         Assign<"z", Apply<std::plus<>, Apply<std::multiplies<>, Var<"y">, ValNum<10>>, ValNum<7>>>,
+                         Assign<"text", ValStr<"Hello ">>,
+                         Assign<"text2", Apply<std::plus<>, Var<"text">, ValStr<"World!">>>>;
 
     static_assert(LinkedListGetValue<code::values, "x">::value == 6);
     static_assert(LinkedListGetValue<code::values, "y">::value == 8);
-    static_assert(LinkedListGetValue<code::values, "z">::value == 25);
-    std::cout << LinkedListGetValue<code::values, "a">::value << std::endl;
-    //static_assert(LinkedListGetValue<code::values, "z">::value == 25);
+    static_assert(LinkedListGetValue<code::values, "z">::value == 87);
+    constexpr string_literal teststring = "Hello World!";
 
-    // std::cout << LinkedListGetValue<code::values, "x">::value << std::endl;
-    // std::cout << LinkedListGetValue<code::values, "y">::value << std::endl;
-    // std::cout << LinkedListGetValue<code::values, "z">::value << std::endl;
+    
+    static_assert(LinkedListGetValue<code::values, "text2">::value == teststring);
+
 
 
 
