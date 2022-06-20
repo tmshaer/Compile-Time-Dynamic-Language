@@ -46,12 +46,13 @@ struct Var {
 };
 
 
-template<typename Func, typename A, typename B>
+template<typename Func, typename...Args>
 struct Apply {
 
     template<typename SymbolTable>
     static const constexpr auto getValue() {
-        return Func{}(A::template getValue<SymbolTable>(), B::template getValue<SymbolTable>());
+        return Func{}((Args::template getValue<SymbolTable>())...);
+        //return Func{}(A::template getValue<SymbolTable>(), B::template getValue<SymbolTable>());
     }
 };
 
