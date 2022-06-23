@@ -9,7 +9,7 @@
                 "-fconstexpr-depth=100000",
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}",
+                "main.cpp",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],
