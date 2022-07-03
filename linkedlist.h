@@ -15,8 +15,8 @@ Registering new identifiers (and values)
 
 
 
-
-
+// represents none value
+struct NoneValue {};
 
 
 

@@ -1,5 +1,4 @@
-#include "linkedlist.h"
-#include "stack.h"
+#include "symboltable.h"
 
 
 

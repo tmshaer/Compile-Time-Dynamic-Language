@@ -8,15 +8,13 @@
 #include "string"
 
 
-
 int main(int argc, char* argv[])
 {
 
-    runStackTests();
+    runValueStackTests();
     runLinkedListTests();
     /*
     TODO.
-    Replace LinkedList with something faster
     Make it so that you don't have to explicitly pass in a linkedlist item to Execute.
     Add scoping.
 
