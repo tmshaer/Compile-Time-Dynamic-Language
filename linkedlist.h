@@ -18,6 +18,11 @@ Registering new identifiers (and values)
 // represents none value
 struct NoneValue {};
 
+const static NoneValue NONE;
+
+constexpr bool operator==(const NoneValue& a, const NoneValue& b) {
+    return true;
+}
 
 
 //Linked list empty node type (used for matching end of linkedlist) 
@@ -43,7 +48,7 @@ struct[[deprecated]] test {
 
 template<typename T, string_literal LookupID>
 struct LinkedListGetValue {
-    static const constexpr int value  = -1;
+    static const constexpr auto value  = NONE;
 
     // error
     //static_assert(!std::is_same_v<T, T>); + deprecated as message
@@ -93,7 +98,9 @@ struct LinkedListAddValue<A<OldID, OldValue, T>, NewID, NewValue> {
 
 /*
 Change value in list by id
-aka
+akabool operator==(const NoneValue& a) {
+        return true;
+    }
 storage["x"] = 2
 */
 
@@ -154,20 +161,22 @@ void runLinkedListTests() {
     using storage1 = LinkedListNode<"a", 3>;
     using storageN = LinkedListNode<"a", 3, LinkedListNode<"b", 4, LinkedListNode<"c", 9>>>;
 
+    static_assert(NONE == NONE);
+
     // get tests
 
     //0 cases
-    static_assert(LinkedListGetValue<storage0, "a">::value  == -1); //invalid case
+    static_assert(LinkedListGetValue<storage0, "a">::value  == NONE); //invalid case
 
     //1 cases
     static_assert(LinkedListGetValue<storage1, "a">::value  == 3);
-    static_assert(LinkedListGetValue<storage1, "b">::value  == -1); //invalid case
+    static_assert(LinkedListGetValue<storage1, "b">::value  == NONE); //invalid case
 
     // n cases
     static_assert(LinkedListGetValue<storageN, "a">::value  == 3);
     static_assert(LinkedListGetValue<storageN, "b">::value  == 4);
     static_assert(LinkedListGetValue<storageN, "c">::value  == 9);
-    static_assert(LinkedListGetValue<storageN, "d">::value  == -1); //invalid case
+    static_assert(LinkedListGetValue<storageN, "d">::value  == NONE); //invalid case
     
     // set tests
 
