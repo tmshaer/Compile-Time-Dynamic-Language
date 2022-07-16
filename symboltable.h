@@ -32,8 +32,6 @@ struct SymbolTableGetValue {
 };
 
 
-
-
 /*
 Case when not in current scope and there is a enclosing scope
 */
@@ -58,6 +56,56 @@ template<auto Value,  string_literal LookupID>
 struct SymbolTableGetValue<Value, TypeStackEmptyNode, LookupID> {
     static const constexpr auto value  = NONE;
 };
+
+
+/*
+Base case for symboltable get or add value
+*/
+template<auto CurrentValue, typename NextStackNode, typename OriginalStackNode, string_literal LookupID, auto NewValue>
+struct SymbolTableSetOrAddValue {
+    using newStack  = OriginalStackNode;
+};
+
+
+/*
+Found lookup id case.
+Return new stack node
+*/
+template<auto Value,
+         template <typename, typename> typename CurrentStackNode, typename CurrentLinkedList, typename NextStackNode,
+         typename OriginalStackNode,
+         string_literal LookupID,
+         auto NewValue>
+struct SymbolTableSetOrAddValue<Value, CurrentStackNode<CurrentLinkedList, NextStackNode>, OriginalStackNode, LookupID, NewValue> {
+    using newLinkedList = LinkedListSetValue<CurrentLinkedList, LookupID, NewValue>::newList;
+    using newStack  = TypeStackNode<newLinkedList, NextStackNode>;
+};
+
+/*
+Recursive case find next one 
+*/
+template<template <typename, typename> typename CurrentStackNode, typename CurrentLinkedList, typename NextStackNode,
+         typename OriginalStackNode,
+         string_literal LookupID,
+         auto NewValue>
+struct SymbolTableSetOrAddValue<NONE, CurrentStackNode<CurrentLinkedList, NextStackNode>, OriginalStackNode, LookupID, NewValue> {
+    static auto valueLookup = LinkedListGetValue<CurrentLinkedList, LookupID>::value;
+    using newNextStackNode  = SymbolTableSetOrAddValue<valueLookup,  NextStackNode, OriginalStackNode, LookupID, NewValue>::newStack;
+    using newStack = TypeStackNode<CurrentLinkedList, newNextStackNode>;
+};
+
+
+/*
+Case couldn't find identifier
+*/
+template<template <typename, typename> typename OriginalStackNode, typename CurrentLinkedList, typename NextStackNode,
+         string_literal LookupID,
+         auto NewValue>
+struct SymbolTableSetOrAddValue<NONE, TypeStackEmptyNode, OriginalStackNode<CurrentLinkedList, NextStackNode>, LookupID, NewValue> {
+    using newLinkedList = LinkedListSetValue<CurrentLinkedList, LookupID, NewValue>::newList;
+    using newStack = TypeStackNode<newLinkedList, NextStackNode>;
+};
+
 
 
 
