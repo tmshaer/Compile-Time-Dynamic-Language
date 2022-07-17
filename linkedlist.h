@@ -123,6 +123,12 @@ struct LinkedListSetValue<A<OldID, OldValue, T>, LookupID, NewValue> {
 
 };
 
+// template<string_literal LookupID, auto NewValue>
+// struct LinkedListSetValue<LinkedListEmptyNode, LookupID, NewValue> {
+//     using newList  = LinkedListNode<OldID, OldValue>;
+
+// };
+
 /*
 Either sets value if it exists or adds new one
 Helper function that combines set and add functionality into one

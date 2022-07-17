@@ -107,6 +107,26 @@ struct SymbolTableSetOrAddValue<NONE, TypeStackEmptyNode, OriginalStackNode<Curr
 };
 
 
+/*
+Edge case supplied empty list
+*/
+template<string_literal LookupID,
+         auto NewValue>
+struct SymbolTableSetOrAddValue<NONE, TypeStackNode<LinkedListEmptyNode>, TypeStackNode<LinkedListEmptyNode>, LookupID, NewValue> {
+    using newStack = TypeStackNode<LinkedListNode<LookupID, NewValue>>;
+};
+
+
+/*
+Edge case nothing passed
+*/
+template<string_literal LookupID,
+         auto NewValue>
+struct SymbolTableSetOrAddValue<NONE, TypeStackEmptyNode, TypeStackEmptyNode, LookupID, NewValue> {
+    using newStack = TypeStackNode<LinkedListNode<LookupID, NewValue>>;
+};
+
+
 
 
 void runSymbolTableTests() {
@@ -115,9 +135,26 @@ void runSymbolTableTests() {
     using storage11 = TypeStackNode<LinkedListNode<"a", 3>>;
     using storage1N = TypeStackNode<LinkedListNode<"a", 3, LinkedListNode<"b", 4, LinkedListNode<"c", 9>>>>;
 
+
     using storageNN = TypeStackNode<LinkedListNode<"a", 3, LinkedListNode<"aa", 3>>,
                       TypeStackNode<LinkedListNode<"b", 4>, 
                       TypeStackNode<LinkedListNode<"c", 9>>>>;
+
+
+    using storageNNEmptyFirst = TypeStackNode<LinkedListEmptyNode,
+                      TypeStackNode<LinkedListNode<"b", 4>, 
+                      TypeStackNode<LinkedListNode<"c", 9>>>>;
+
+
+    using storageNNEmptyMiddle = TypeStackNode<LinkedListNode<"a", 3, LinkedListNode<"aa", 3>>,
+                      TypeStackNode<LinkedListEmptyNode, 
+                      TypeStackNode<LinkedListNode<"c", 9>>>>;
+
+
+    using storageNNEmptyEnd = TypeStackNode<LinkedListNode<"a", 3, LinkedListNode<"aa", 3>>,
+                      TypeStackNode<LinkedListNode<"b", 4>, 
+                      TypeStackNode<LinkedListEmptyNode>>>;
+
 
     // no scopes edge case
     static_assert(SymbolTableGetValue<NONE, storage0, "a">::value == NONE); // invalid case
@@ -135,7 +172,7 @@ void runSymbolTableTests() {
     static_assert(SymbolTableGetValue<NONE, storage1N, "c">::value == 9);
     static_assert(SymbolTableGetValue<NONE, storage1N, "d">::value == NONE); // invalid case
 
-    // multiple scopes
+    // multiple scopes None empty
     static_assert(SymbolTableGetValue<NONE, storageNN, "a">::value == 3);
     static_assert(SymbolTableGetValue<NONE, storageNN, "aa">::value == 3);
     static_assert(SymbolTableGetValue<NONE, storageNN, "b">::value == 4);
@@ -143,7 +180,106 @@ void runSymbolTableTests() {
     static_assert(SymbolTableGetValue<NONE, storageNN, "d">::value == NONE);
 
 
+    // multiple scopes First empty
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyFirst, "a">::value == NONE);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyFirst, "aa">::value == NONE);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyFirst, "b">::value == 4);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyFirst, "c">::value == 9);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyFirst, "d">::value == NONE);
 
 
+    // multiple scopes middle empty
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyMiddle, "a">::value == 3);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyMiddle, "aa">::value == 3);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyMiddle, "b">::value == NONE);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyMiddle, "c">::value == 9);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyMiddle, "d">::value == NONE);
+
+
+    // multiple scopes end empty
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyEnd, "a">::value == 3);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyEnd, "aa">::value == 3);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyEnd, "b">::value == 4);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyEnd, "c">::value == NONE);
+    static_assert(SymbolTableGetValue<NONE, storageNNEmptyEnd, "d">::value == NONE);
+
+    /*
+    using storage0 = TypeStackEmptyNode;
+    using storage10 = TypeStackNode<LinkedListEmptyNode>;
+    using storage11 = TypeStackNode<LinkedListNode<"a", 3>>;
+    using storage1N = TypeStackNode<LinkedListNode<"a", 3, LinkedListNode<"b", 4, LinkedListNode<"c", 9>>>>;
+
+
+    using storageNN = TypeStackNode<LinkedListNode<"a", 3, LinkedListNode<"aa", 3>>,
+                      TypeStackNode<LinkedListNode<"b", 4>, 
+                      TypeStackNode<LinkedListNode<"c", 9>>>>;
+
+
+    using storageNNEmptyFirst = TypeStackNode<LinkedListEmptyNode,
+                      TypeStackNode<LinkedListNode<"b", 4>, 
+                      TypeStackNode<LinkedListNode<"c", 9>>>>;
+
+
+    using storageNNEmptyMiddle = TypeStackNode<LinkedListNode<"a", 3, LinkedListNode<"aa", 3>>,
+                      TypeStackNode<LinkedListEmptyNode, 
+                      TypeStackNode<LinkedListNode<"c", 9>>>>;
+
+
+    using storageNNEmptyEnd = TypeStackNode<LinkedListNode<"a", 3, LinkedListNode<"aa", 3>>,
+                      TypeStackNode<LinkedListNode<"b", 4>, 
+                      TypeStackNode<LinkedListEmptyNode>>>;
+    */
+
+
+    // no scopes edge case
+    static_assert(std::is_same_v<SymbolTableSetOrAddValue<NONE, storage0, storage0, "a", 5>::newStack, TypeStackNode<LinkedListNode<"a", 5>>>);
+
+    // one scope with no values
+
+    static_assert(std::is_same_v<SymbolTableSetOrAddValue<NONE, storage10, storage10, "a", 5>::newStack, TypeStackNode<LinkedListNode<"a", 5>>>);
+
+
+    // static_assert(SymbolTableGetValue<NONE, storage10, "a">::value == NONE); // invalid case
+
+    // one scope with one value
+    // static_assert(SymbolTableGetValue<NONE, storage11, "a">::value == 3);
+    // static_assert(SymbolTableGetValue<NONE, storage11, "b">::value == NONE); // invalid case
+
+    // one scope with multiple values
+    // static_assert(SymbolTableGetValue<NONE, storage1N, "a">::value == 3);
+    // static_assert(SymbolTableGetValue<NONE, storage1N, "b">::value == 4);
+    // static_assert(SymbolTableGetValue<NONE, storage1N, "c">::value == 9);
+    // static_assert(SymbolTableGetValue<NONE, storage1N, "d">::value == NONE); // invalid case
+
+    // multiple scopes None empty
+    // static_assert(SymbolTableGetValue<NONE, storageNN, "a">::value == 3);
+    // static_assert(SymbolTableGetValue<NONE, storageNN, "aa">::value == 3);
+    // static_assert(SymbolTableGetValue<NONE, storageNN, "b">::value == 4);
+    // static_assert(SymbolTableGetValue<NONE, storageNN, "c">::value == 9);
+    // static_assert(SymbolTableGetValue<NONE, storageNN, "d">::value == NONE);
+
+
+    // multiple scopes First empty
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyFirst, "a">::value == NONE);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyFirst, "aa">::value == NONE);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyFirst, "b">::value == 4);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyFirst, "c">::value == 9);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyFirst, "d">::value == NONE);
+
+
+    // multiple scopes middle empty
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyMiddle, "a">::value == 3);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyMiddle, "aa">::value == 3);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyMiddle, "b">::value == NONE);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyMiddle, "c">::value == 9);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyMiddle, "d">::value == NONE);
+
+
+    // multiple scopes end empty
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyEnd, "a">::value == 3);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyEnd, "aa">::value == 3);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyEnd, "b">::value == 4);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyEnd, "c">::value == NONE);
+    // static_assert(SymbolTableGetValue<NONE, storageNNEmptyEnd, "d">::value == NONE);
 
 }
