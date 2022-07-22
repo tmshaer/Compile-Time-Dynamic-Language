@@ -52,22 +52,7 @@ struct Apply {
     }
 };
 
-template<bool Condition, typename...Statements>
-struct If {
 
-    template<typename SymbolTable>
-    static const constexpr auto getValue() {
-        return 3;
-    }
-};
-
-
-
-
-template<string_literal VarName, typename Value, typename SymbolTable = TypeStackEmptyNode>
-struct Assign {
-    using UpdatedSymbolTable = SymbolTableDeclareOrAssignVariable<SymbolTable, VarName, Value::template getValue<SymbolTable>()>::newStack;
-};
 
 
 
@@ -77,6 +62,36 @@ struct Assign {
 template <typename SymbolTable, typename... Statements>
 struct Execute {
     using values = SymbolTable;
+};
+
+template<typename Condition, typename SymbolTable = TypeStackEmptyNode, typename...Statements>
+struct If {
+    
+
+    using UpdatedSymbolTable = typename decltype([]() {
+        
+        static const constexpr auto conditionValue = Condition::template getValue<SymbolTable>();
+
+        //                                                  DON'T FORGET CONST!
+         if constexpr (conditionValue) {
+            using newSymbolTable = TypeStackNode<LinkedListEmptyNode, SymbolTable>; // declare new empty scope on temp symbol table
+            using updatedSymbolTable = Execute<newSymbolTable, Statements...>::values; // execute if statement code on temp symbol table
+            using poppedSymbolTable = TypeStackPopNode<updatedSymbolTable>::newList; // pop off the new latest stack
+            return typetag<poppedSymbolTable>{};
+        } else {
+            // if not true just ignore and return old symbol table
+            return typetag<SymbolTable>{};
+         }
+    }())::type;
+
+};
+
+
+
+
+template<string_literal VarName, typename Value, typename SymbolTable = TypeStackEmptyNode>
+struct Assign {
+    using UpdatedSymbolTable = SymbolTableDeclareOrAssignVariable<SymbolTable, VarName, Value::template getValue<SymbolTable>()>::newStack;
 };
 
 
@@ -90,3 +105,13 @@ struct Execute<SymbolTable, AssignNode<VarName, Value>, Statements...> {
     using values = Execute<TempTable, Statements...>::values;
 };
 
+
+// match if node
+template <typename SymbolTable, 
+          template <typename, typename> typename IfNode, typename Condition, typename... IfStatements,
+          typename... Statements>
+struct Execute<SymbolTable, IfNode<Condition, IfStatements...>, Statements...> {
+
+    using TempTable = IfNode<Condition, SymbolTable, IfStatements...>::UpdatedSymbolTable;
+    using values = Execute<TempTable, Statements...>::values;
+};

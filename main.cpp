@@ -13,22 +13,6 @@ int main(int argc, char* argv[])
 
     runValueStackTests();
     runLinkedListTests();
-    /*
-    TODO.
-    Make it so that you don't have to explicitly pass in a linkedlist item to Execute.
-    Add scoping.
-
-    How to do scoping:
-
-    For each scope pass a new symbol table on to it.
-    If an attempt is made to modify a variable, first check existing scope's. -> can be done through some kind of stack data structure.
-    If not found on exsting scope, then check local scope and if still not found then declare it then.
-
-    Variables do same approach.
-
-
-    */
-
 
    /*
     x = 6
@@ -45,25 +29,21 @@ int main(int argc, char* argv[])
                          Assign<"z", Apply<std::plus<>, Apply<std::multiplies<>, Var<"y">, Val<10>>, Val<7>>>,
                          Assign<"text", ValStr<"Hello ">>,
                          Assign<"text2", Apply<std::plus<>, Var<"text">, ValStr<"World!">>>,
-                         Assign<"bool", Apply<std::logical_not<>, Val<true>>>>;
-                         //If<Val<true>, 
-                            //Assign<"g", Val<5>>>>;
+                         Assign<"bool", Apply<std::logical_not<>, Val<true>>>,
+                         Assign<"ifmodified", Val<false>>,
+                         If<Val<1>, 
+                            Assign<"temp", Val<10>>,
+                            Assign<"ifmodified", Val<true>>>>;
 
-    static_assert(SymbolTableGetValue<NONE, code::values, "x">::value == 6);
-    static_assert(SymbolTableGetValue<NONE, code::values, "y">::value == 8);
-    static_assert(SymbolTableGetValue<NONE, code::values, "z">::value == 87);
+    static_assert(SymbolTableGetValue<NONE, code::values, "x">::value == 6); // basic non modified variable init
+    static_assert(SymbolTableGetValue<NONE, code::values, "y">::value == 8); // basic evaluation of expression using Apply and ID lookup using Var
+    static_assert(SymbolTableGetValue<NONE, code::values, "z">::value == 87); // chained expression test
     constexpr string_literal teststring = "Hello World!";
-    static_assert(SymbolTableGetValue<NONE, code::values, "text2">::value == teststring);
-    static_assert(!SymbolTableGetValue<NONE, code::values, "bool">::value);
-
-
-
-
-    return 0;
-
-
+    static_assert(SymbolTableGetValue<NONE, code::values, "text2">::value == teststring); // string concat test
+    static_assert(!SymbolTableGetValue<NONE, code::values, "bool">::value); // bool test
+    static_assert(SymbolTableGetValue<NONE, code::values, "temp">::value == NONE); // GOOD we lose values on the temp if scope
+    static_assert(SymbolTableGetValue<NONE, code::values, "ifmodified">::value); // GOOD we successfully modified variable in outer scope
 
     return 0;
-  
 }
 
