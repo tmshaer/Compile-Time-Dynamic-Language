@@ -6,7 +6,7 @@ Implement a dynamically typed language in C++ that is evaluated 100% at compile 
 
 ### Example Usage
 
-main.cpp contains the following working example.
+main.cpp contains the following working example:
 
     // psudo code example
     /*
