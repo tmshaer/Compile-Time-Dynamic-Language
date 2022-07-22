@@ -8,7 +8,7 @@ Implement a dynamically typed language in C++ that is evaluated 100% at compile 
 
 main.cpp contains the following working example:
 
-    // psudo code example
+    // pseudo code example
     /*
     x = 6
     y = 2 + x
@@ -22,7 +22,8 @@ main.cpp contains the following working example:
        ifmodified = true
     */
 
-    // equivalent code in C++ here
+
+    // equivalent code in C++ here | entirely evaluated at compile time
     using code = Execute<TypeStackEmptyNode,
                          Assign<"x", Val<6>>,
                          Assign<"y", Apply<std::plus<>, Val<2>, Var<"x">>>,
@@ -34,6 +35,7 @@ main.cpp contains the following working example:
                          If<Val<1>, 
                             Assign<"temp", Val<10>>,
                             Assign<"ifmodified", Val<true>>>>;
+
 
     // tests
     static_assert(SymbolTableGetValue<NONE, code::values, "x">::value == 6); // basic non modified variable init
