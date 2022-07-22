@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     bool = !true
    */
 
-    using code = Execute<LinkedListEmptyNode,
+    using code = Execute<TypeStackEmptyNode,
                          Assign<"x", Val<6>>,
                          Assign<"y", Apply<std::plus<>, Val<2>, Var<"x">>>,
                          Assign<"z", Apply<std::plus<>, Apply<std::multiplies<>, Var<"y">, Val<10>>, Val<7>>>,
@@ -49,12 +49,12 @@ int main(int argc, char* argv[])
                          //If<Val<true>, 
                             //Assign<"g", Val<5>>>>;
 
-    static_assert(LinkedListGetValue<code::values, "x">::value == 6);
-    static_assert(LinkedListGetValue<code::values, "y">::value == 8);
-    static_assert(LinkedListGetValue<code::values, "z">::value == 87);
+    static_assert(SymbolTableGetValue<NONE, code::values, "x">::value == 6);
+    static_assert(SymbolTableGetValue<NONE, code::values, "y">::value == 8);
+    static_assert(SymbolTableGetValue<NONE, code::values, "z">::value == 87);
     constexpr string_literal teststring = "Hello World!";
-    static_assert(LinkedListGetValue<code::values, "text2">::value == teststring);
-    static_assert(!LinkedListGetValue<code::values, "bool">::value);
+    static_assert(SymbolTableGetValue<NONE, code::values, "text2">::value == teststring);
+    static_assert(!SymbolTableGetValue<NONE, code::values, "bool">::value);
 
 
 

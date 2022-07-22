@@ -123,43 +123,6 @@ struct LinkedListSetValue<A<OldID, OldValue, T>, LookupID, NewValue> {
 
 };
 
-// template<string_literal LookupID, auto NewValue>
-// struct LinkedListSetValue<LinkedListEmptyNode, LookupID, NewValue> {
-//     using newList  = LinkedListNode<OldID, OldValue>;
-
-// };
-
-/*
-Either sets value if it exists or adds new one
-Helper function that combines set and add functionality into one
-
-*/
-
-template<typename T, string_literal LookupID, auto NewValue>
-struct LinkedListSetOrAddValue {
-    using newList  = T;
-};
-
-
-//end case couldn't find a value
-template<string_literal LookupID, auto NewValue>
-struct LinkedListSetOrAddValue<LinkedListEmptyNode, LookupID, NewValue> {
-    using newList  = LinkedListNode<LookupID, NewValue>;
-};
-
-
-//match case
-template<template <string_literal, auto, typename> typename A, string_literal OldID, auto OldValue, typename T, auto NewValue>
-struct LinkedListSetOrAddValue<A<OldID, OldValue, T>, OldID, NewValue> {
-    using newList  = LinkedListNode<OldID, NewValue, T>;
-};
-
-template<template <string_literal, auto, typename> typename A, string_literal OldID, auto OldValue, typename T, string_literal LookupID, auto NewValue>
-struct LinkedListSetOrAddValue<A<OldID, OldValue, T>, LookupID, NewValue> {
-    using extract = LinkedListSetOrAddValue<T, LookupID, NewValue>::newList;
-    using newList  = LinkedListNode<OldID, OldValue, extract>;
-
-};
 
 
 void runLinkedListTests() {
@@ -210,21 +173,5 @@ void runLinkedListTests() {
 
     //n cases
     static_assert(std::is_same_v<LinkedListNode<"a", 3, LinkedListNode<"b", 4, LinkedListNode<"c", 9, LinkedListNode<"d", 12>>>>, LinkedListAddValue<storageN, "d", 12>::newList>); 
-
-
-    // set or add tests
-
-    //0 cases
-    static_assert(std::is_same_v<LinkedListNode<"a", 40>, LinkedListSetOrAddValue<storage0, "a", 40>::newList>); 
-
-    //1 cases
-    static_assert(std::is_same_v<LinkedListNode<"a", 40>, LinkedListSetOrAddValue<storage1, "a", 40>::newList>); 
-    static_assert(std::is_same_v<LinkedListNode<"a", 3, LinkedListNode<"b", 40>>, LinkedListSetOrAddValue<storage1, "b", 40>::newList>); //add case
-
-    //n cases
-    static_assert(std::is_same_v<LinkedListNode<"a", 40, LinkedListNode<"b", 4, LinkedListNode<"c", 9>>>, LinkedListSetOrAddValue<storageN, "a", 40>::newList>); 
-    static_assert(std::is_same_v<LinkedListNode<"a", 3, LinkedListNode<"b", 40, LinkedListNode<"c", 9>>>, LinkedListSetOrAddValue<storageN, "b", 40>::newList>); 
-    static_assert(std::is_same_v<LinkedListNode<"a", 3, LinkedListNode<"b", 4, LinkedListNode<"c", 40>>>, LinkedListSetOrAddValue<storageN, "c", 40>::newList>); 
-    static_assert(std::is_same_v<LinkedListNode<"a", 3, LinkedListNode<"b", 4, LinkedListNode<"c", 9, LinkedListNode<"d", 40>>>>, LinkedListSetOrAddValue<storageN, "d", 40>::newList>);  //invalid case
 
 }

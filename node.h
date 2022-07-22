@@ -1,8 +1,5 @@
 #include "symboltable.h"
 
-
-
-
 /*
 Contains all the valid AST nodes for our language.
 */
@@ -41,7 +38,7 @@ struct Var {
 
     template<typename SymbolTable>
      static const constexpr auto getValue() {
-        return LinkedListGetValue<SymbolTable, VarName>::value;
+        return SymbolTableGetValue<NONE, SymbolTable, VarName>::value;
     }
 };
 
@@ -67,9 +64,9 @@ struct If {
 
 
 
-template<string_literal VarName, typename Value, typename SymbolTable = LinkedListEmptyNode>
+template<string_literal VarName, typename Value, typename SymbolTable = TypeStackEmptyNode>
 struct Assign {
-    using UpdatedSymbolTable = LinkedListSetOrAddValue<SymbolTable, VarName, Value::template getValue<SymbolTable>()>::newList;
+    using UpdatedSymbolTable = SymbolTableDeclareOrAssignVariable<SymbolTable, VarName, Value::template getValue<SymbolTable>()>::newStack;
 };
 
 
@@ -84,19 +81,12 @@ struct Execute {
 
 
 // match assign node
-template <typename SymbolTable, template <string_literal, typename> typename AssignNode, string_literal VarName, typename Value, typename... Statements>
+template <typename SymbolTable, 
+          template <string_literal, typename> typename AssignNode, string_literal VarName, typename Value,
+          typename... Statements>
 struct Execute<SymbolTable, AssignNode<VarName, Value>, Statements...> {
 
     using TempTable = Assign<VarName, Value, SymbolTable>::UpdatedSymbolTable;
     using values = Execute<TempTable, Statements...>::values;
 };
-
-// match assign node
-// template <typename SymbolTable, template <string_literal, typename> typename AssignNode, string_literal VarName, typename Value, typename... Statements>
-// struct Execute<SymbolTable, AssignNode<VarName, Value>, Statements...> {
-
-//     using TempTable = Assign<VarName, Value, SymbolTable>::UpdatedSymbolTable;
-//     using values = Execute<TempTable, Statements...>::values;
-// };
-
 
