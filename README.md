@@ -6,8 +6,8 @@ Implement a dynamically typed language in C++ that is evaluated 100% at compile 
 
 ###### Example Usage
 
-   // psudo code for below example here
-   /*
+    // psudo code for below example here
+    /*
     x = 6
     y = 2 + x
     z = (y * 10) + 7
@@ -18,7 +18,7 @@ Implement a dynamically typed language in C++ that is evaluated 100% at compile 
     if 1:
        temp = 10
        ifmodified = true
-   */
+    */
 
     // code
     using code = Execute<TypeStackEmptyNode,
