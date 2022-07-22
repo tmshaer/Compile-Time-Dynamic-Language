@@ -6,6 +6,8 @@ Implement a dynamically typed language in C++ that is evaluated 100% at compile 
 
 ### Example Usage
 
+Have a look at main.cpp for this example!
+
     // psudo code example
     /*
     x = 6
