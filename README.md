@@ -1,10 +1,10 @@
 # Compile Time Dynamic Language
 
 
-###### Aim of project: 
+### Aim of project: 
 Implement a dynamically typed language in C++ that is evaluated 100% at compile time.
 
-###### Example Usage
+### Example Usage
 
     // psudo code example
     /*
@@ -44,13 +44,13 @@ Implement a dynamically typed language in C++ that is evaluated 100% at compile 
     static_assert(SymbolTableGetValue<NONE, code::values, "ifmodified">::value); // GOOD we successfully modified variable in outer scope
 
 
-###### Approach
+### Approach
 The language will be implemented as a tree-walk interpreter which makes use of nodes that perform operations.  
 
-###### Compiler
+### Compiler
 GCC-11 /std:c++20
 
-###### Milestones:
+### Milestones:
 1. Implement basic chainable expressions such as binary ops for float/number types ✔️
 2. Implement variables using lookup table. ✔️
 3. Implement boolean and string types. ✔️
