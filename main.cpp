@@ -21,6 +21,10 @@ int main(int argc, char* argv[])
     text = "Hello "
     text2 = text + "World!"
     bool = !true
+    ifmodified = false
+    if 1:
+       temp = 10
+       ifmodified = true
    */
 
     using code = Execute<TypeStackEmptyNode,
