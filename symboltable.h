@@ -66,6 +66,10 @@ struct SymbolTableGetValue<Value, TypeStackEmptyNode, LookupID> {
 
 template<typename T>
 struct typetag {
+
+    constexpr typetag() {}
+    constexpr typetag(T l) {}
+
     using type = T;
 };
 

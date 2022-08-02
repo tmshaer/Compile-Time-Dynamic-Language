@@ -64,9 +64,12 @@ struct Execute {
     using values = SymbolTable;
 };
 
+struct Statement {
+
+};
+
 template<typename Condition, typename SymbolTable = TypeStackEmptyNode, typename...Statements>
 struct If {
-    
 
     using UpdatedSymbolTable = typename decltype([]() {
         
@@ -84,6 +87,13 @@ struct If {
          }
     }())::type;
 
+    /*
+    // returns type tag of itself
+    constexpr auto get_type() {
+        return type_tag<declaretype(*this)>{};
+    }
+    */
+
 };
 
 
@@ -92,6 +102,14 @@ struct If {
 template<string_literal VarName, typename Value, typename SymbolTable = TypeStackEmptyNode>
 struct Assign {
     using UpdatedSymbolTable = SymbolTableDeclareOrAssignVariable<SymbolTable, VarName, Value::template getValue<SymbolTable>()>::newStack;
+
+    /*
+    // returns type tag of itself
+    constexpr auto get_type() {
+        return type_tag<declaretype(*this)>{};
+    }
+    */
+
 };
 
 
